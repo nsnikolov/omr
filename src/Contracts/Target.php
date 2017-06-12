@@ -2,7 +2,6 @@
 
 namespace JansenFelipe\OMR\Contracts;
 
-
 abstract class Target
 {
     /**
@@ -36,7 +35,7 @@ abstract class Target
     /**
      * Checks if the target was marked
      *
-     * @return boolean
+     * @return bool
      */
     public function isMarked()
     {
@@ -46,7 +45,8 @@ abstract class Target
     /**
      * Tells whether the target was marked
      *
-     * @param boolean $marked
+     * @param bool $marked Whether or not the target is marked
+     * @return void
      */
     public function setMarked($marked)
     {
@@ -62,7 +62,8 @@ abstract class Target
     }
 
     /**
-     * @param string $id
+     * @param string $id The ID
+     * @return void
      */
     public function setId($id)
     {
@@ -78,7 +79,8 @@ abstract class Target
     }
 
     /**
-     * @param float $tolerance
+     * @param float $tolerance The tolerance
+     * @return void
      */
     public function setTolerance($tolerance)
     {
@@ -94,11 +96,11 @@ abstract class Target
     }
 
     /**
-     * @param float $blackPixelsPercent
+     * @param float $blackPixelsPercent The percentage of black pixels
+     * @return void
      */
     public function setBlackPixelsPercent($blackPixelsPercent)
     {
         $this->blackPixelsPercent = $blackPixelsPercent;
     }
-
 }

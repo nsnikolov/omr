@@ -41,5 +41,4 @@ interface Map
      * @return Target[]
      */
     public function targets();
-
 }

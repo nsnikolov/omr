@@ -15,6 +15,9 @@ class ImagickScanner extends Scanner
     private $imagick;
     private $draw;
 
+    /**
+     * Construct method
+     */
     public function __construct()
     {
         $this->draw = new ImagickDraw();
@@ -28,8 +31,7 @@ class ImagickScanner extends Scanner
      */
     private function getImagick()
     {
-        if(is_null($this->imagick))
-        {
+        if (is_null($this->imagick)) {
             $this->original = new Imagick($this->imagePath);
 
             $this->imagick = new Imagick($this->imagePath);
@@ -46,6 +48,7 @@ class ImagickScanner extends Scanner
     /**
      * Most point to the top/right
      *
+     * @param Point $near A point
      * @return Point
      */
     protected function topRight(Point $near)
@@ -53,7 +56,7 @@ class ImagickScanner extends Scanner
         $imagick = $this->getImagick();
 
         $first = new Point($near->getX() - 200, $near->getY() - 100);
-        $last  = new Point($near->getX() + 100, $near->getY() + 200);
+        $last = new Point($near->getX() + 100, $near->getY() + 200);
 
         $point = new Point($first->getX(), $last->getY());
 
@@ -64,32 +67,34 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeColor("#00CC00");
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
-        for($y = $first->getY(); $y != $last->getY(); $y++)
-        {
-            for($x = $first->getX(); $x != $last->getX(); $x++)
-            {
+        for ($y = $first->getY(); $y != $last->getY(); $y++) {
+            for ($x = $first->getX(); $x != $last->getX(); $x++) {
                 $color = $imagick->getImagePixelColor($x, $y)->getColor();
 
-                if ($color['r'] <= 5 && $color['g'] <= 5 && $color['b'] <= 5)
-                {
-                    if ($x >= $point->getX())
+                if ($color['r'] <= 5 && $color['g'] <= 5 && $color['b'] <= 5) {
+                    if ($x >= $point->getX()) {
                         $point->setX($x);
+                    }
 
-                    if ($y <= $point->getY())
+                    if ($y <= $point->getY()) {
                         $point->setY($y);
+                    }
                 }
             }
         }
 
         //Debug draw
         $this->draw->setFillColor("#00CC00");
-        $this->draw->point($point->getX(), $point->getY());$this->debug();
+        $this->draw->point($point->getX(), $point->getY());
+        $this->debug();
 
         return $point;
     }
 
     /**
      * Most point to the bottom/left
+     *
+     * @param Point $near The point
      *
      * @return Point
      */
@@ -99,7 +104,7 @@ class ImagickScanner extends Scanner
         $side = 200;
 
         $first = new Point($near->getX() - 100, $near->getY() - 200);
-        $last  = new Point($near->getX() + 200, $near->getY() + 100);
+        $last = new Point($near->getX() + 200, $near->getY() + 100);
 
         $point = new Point($last->getX(), $first->getY());
 
@@ -110,19 +115,17 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeColor("#00CC00");
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
-        for($y = $first->getY(); $y != $last->getY(); $y++)
-        {
-            for($x = $first->getX(); $x != $last->getX(); $x++)
-            {
+        for ($y = $first->getY(); $y != $last->getY(); $y++) {
+            for ($x = $first->getX(); $x != $last->getX(); $x++) {
                 $color = $imagick->getImagePixelColor($x, $y)->getColor();
 
-                if ($color['r'] <= 5 && $color['g'] <= 5 && $color['b'] <= 5)
-                {
-                    if ($x <= $point->getX())
+                if ($color['r'] <= 5 && $color['g'] <= 5 && $color['b'] <= 5) {
+                    if ($x <= $point->getX()) {
                         $point->setX($x);
-
-                    if ($y >= $point->getY())
+                    }
+                    if ($y >= $point->getY()) {
                         $point->setY($y);
+                    }
                 }
             }
         }
@@ -137,29 +140,32 @@ class ImagickScanner extends Scanner
     /**
      * Increases or decreases image size
      *
-     * @param float $percent
+     * @param float $percent The Percentage
+     * @return void
      */
-    protected function ajustSize($percent)
+    protected function adjustSize($percent)
     {
         $imagick = $this->getImagick();
 
-        $widthAjusted = $imagick->getImageWidth() + (($imagick->getImageWidth() * $percent) / 100);
-        $heightAjust = $imagick->getImageHeight() + (($imagick->getImageHeight() * $percent) / 100);
+        $widthAdjusted = $imagick->getImageWidth() + (($imagick->getImageWidth() * $percent) / 100);
+        $heightAdjust = $imagick->getImageHeight() + (($imagick->getImageHeight() * $percent) / 100);
 
-        $this->imagick->resizeImage($widthAjusted, $heightAjust, Imagick::FILTER_POINT, 0, false);
+        $this->imagick->resizeImage($widthAdjusted, $heightAdjust, Imagick::FILTER_POINT, 0, false);
 
-        $this->original->resizeImage($widthAjusted, $heightAjust, Imagick::FILTER_POINT, 0, false);
+        $this->original->resizeImage($widthAdjusted, $heightAdjust, Imagick::FILTER_POINT, 0, false);
     }
 
     /**
      * Rotate image
      *
-     * @param float $degrees
+     * @param float $degrees The degrees to adjust
+     * @return void
      */
-    protected function ajustRotate($degrees)
+    protected function adjustRotate($degrees)
     {
-        if($degrees<0)
+        if ($degrees < 0) {
             $degrees = 360 + $degrees;
+        }
 
         $imagick = $this->getImagick();
 
@@ -176,9 +182,9 @@ class ImagickScanner extends Scanner
     }
 
     /**
-     * Genereate file debug.jpg with targets, topRight and buttonLeft
+     * Generate file debug.jpg with targets, topRight and buttonLeft
      *
-     * @param void
+     * @return void
      */
     public function debug()
     {
@@ -190,9 +196,9 @@ class ImagickScanner extends Scanner
     /**
      * Returns pixel analysis in a rectangular area
      *
-     * @param Point $a
-     * @param Point $b
-     * @param float $tolerance
+     * @param Point $a A point
+     * @param Point $b A point
+     * @param float $tolerance The tolerance
      * @return Area
      */
     protected function rectangleArea(Point $a, Point $b, $tolerance)
@@ -208,11 +214,12 @@ class ImagickScanner extends Scanner
         $blacks = 0;
         $whites = 0;
 
-        foreach($counts as $k => $qtd){
-            if($k == -1)
+        foreach ($counts as $k => $qtd) {
+            if ($k == -1) {
                 $whites += $qtd;
-            else
+            } else {
                 $blacks += $qtd;
+            }
         }
 
         $area = new Area(count($pixels), $whites, $blacks);
@@ -221,7 +228,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack()>=$tolerance?"#0000CC":"#CC0000");
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance?"#0000CC":"#CC0000");
         $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $area;
@@ -230,9 +237,9 @@ class ImagickScanner extends Scanner
     /**
      * Returns pixel analysis in a circular area
      *
-     * @param Point $a
-     * @param float $radius
-     * @param float $tolerance
+     * @param Point $a A point
+     * @param float $radius The radius
+     * @param float $tolerance The tolerance
      * @return Area
      */
     protected function circleArea(Point $a, $radius, $tolerance)
@@ -243,8 +250,8 @@ class ImagickScanner extends Scanner
     /**
      * Returns image blob in a rectangular area
      *
-     * @param Point $a
-     * @param Point $b
+     * @param Point $a A point
+     * @param Point $b A point
      * @return string
      */
     protected function textArea(Point $a, Point $b)
@@ -267,7 +274,7 @@ class ImagickScanner extends Scanner
     /**
      * Finish processes
      *
-     * @param void
+     * @return void
      */
     protected function finish()
     {

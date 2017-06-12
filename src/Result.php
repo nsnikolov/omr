@@ -44,8 +44,9 @@ class Result
     /**
      * Set dimensions
      *
-     * @param $width
-     * @param $height
+     * @param int $width The width
+     * @param int $height The height
+     * @return void
      */
     public function setDimensions($width, $height)
     {
@@ -56,7 +57,7 @@ class Result
     /**
      * Add target
      *
-     * @param Target $target
+     * @param Target $target The target
      * @return void
      */
     public function addTarget(Target $target)
@@ -77,7 +78,8 @@ class Result
     /**
      * Set mime image
      *
-     * @param string $imageMime
+     * @param string $imageMime The image mimetype
+     * @return void
      */
     public function setImageMime($imageMime)
     {
@@ -87,7 +89,8 @@ class Result
     /**
      * Set Path image
      *
-     * @param string $imagePath
+     * @param string $imagePath The image path
+     * @return void
      */
     public function setImagePath($imagePath)
     {

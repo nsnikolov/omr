@@ -12,7 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ScanCommand extends Command
 {
-
+    /**
+     * Configure method
+     *
+     * @return void
+     */
     protected function configure()
     {
         $this
@@ -36,6 +40,13 @@ class ScanCommand extends Command
             );
     }
 
+    /**
+     * Execute method
+     *
+     * @param InputInterface $input The input
+     * @param OutputInterface $output The output
+     * @return void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $imagePath = $input->getArgument('imageJPG');
@@ -59,6 +70,4 @@ class ScanCommand extends Command
          */
         $result = $scanner->scan($map, 28);
     }
-
-
 }

@@ -22,11 +22,11 @@ class RectangleTarget extends Target
     private $b;
 
     /**
-     * Contructor
+     * Constructor method
      *
-     * @param $id
-     * @param Point $a
-     * @param Point $b
+     * @param mixed $id The ID
+     * @param Point $a A point
+     * @param Point $b A point
      */
     public function __construct($id, Point $a, Point $b)
     {
@@ -54,5 +54,4 @@ class RectangleTarget extends Target
     {
         return $this->b;
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace JansenFelipe\OMR;
 
-
 class Point
 {
     /**
@@ -22,10 +21,11 @@ class Point
     /**
      * Constructor
      *
-     * @param float $x
-     * @param float $y
+     * @param float $x The coordinate
+     * @param float $y The coordinate
      */
-    public function __construct($x, $y){
+    public function __construct($x, $y)
+    {
         $this->x = $x;
         $this->y = $y;
     }
@@ -53,7 +53,8 @@ class Point
     /**
      * Position X
      *
-     * @param float $x
+     * @param float $x The coordinate
+     * @return void
      */
     public function setX($x)
     {
@@ -63,37 +64,37 @@ class Point
     /**
      * Position Y
      *
-     * @param float $y
+     * @param float $y The coordinate
+     * @return void
      */
     public function setY($y)
     {
         $this->y = $y;
     }
 
-
-
     /**
      * Move the point at $position on the X axis
      *
-     * @param int $position
+     * @param int $position The position
      * @return Point
      */
     public function moveX($position)
     {
         $this->x = $this->x + $position;
+
         return $this;
     }
 
     /**
      * Move the point at $position on the Y axis
      *
-     * @param int $position
+     * @param int $position The position
      * @return Point
      */
     public function moveY($position)
     {
         $this->y = $this->y + $position;
+
         return $this;
     }
-
 }

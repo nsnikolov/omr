@@ -2,7 +2,6 @@
 
 namespace JansenFelipe\OMR;
 
-
 class Area
 {
     /**
@@ -27,9 +26,13 @@ class Area
     private $blackPixels;
 
     /**
-     * Constructor
+     * Constructor method
+     * @param int $pixels The pixels
+     * @param int $whitePixels The white pixels
+     * @param int $blackPixels The black pixels
      */
-    public function __construct($pixels, $whitePixels, $blackPixels){
+    public function __construct($pixels, $whitePixels, $blackPixels)
+    {
         $this->pixels = $pixels;
         $this->whitePixels = $whitePixels;
         $this->blackPixels = $blackPixels;
@@ -38,18 +41,20 @@ class Area
     /**
      * Percentage of black pixels
      *
-     * @var float
+     * @return float
      */
-    public function percentBlack(){
+    public function percentBlack()
+    {
         return (100 * $this->blackPixels) / $this->pixels;
     }
 
     /**
      * Percentage of white pixels
      *
-     * @var float
+     * @return float
      */
-    public function percentWhite(){
+    public function percentWhite()
+    {
         return (100 * $this->whitePixels) / $this->pixels;
     }
 }

@@ -29,11 +29,11 @@ class TextTarget extends Target
     private $imageBlob;
 
     /**
-     * Contructor
+     * Constructor
      *
-     * @param $id
-     * @param Point $a
-     * @param Point $b
+     * @param mixed $id The ID
+     * @param Point $a A point
+     * @param Point $b A point
      */
     public function __construct($id, Point $a, Point $b)
     {
@@ -65,7 +65,8 @@ class TextTarget extends Target
     /**
      * Set image blob
      *
-     * @param string
+     * @param string $imageBlob The image blob
+     * @return void
      */
     public function setImageBlob($imageBlob)
     {
@@ -81,5 +82,4 @@ class TextTarget extends Target
     {
         return $this->imageBlob;
     }
-
 }

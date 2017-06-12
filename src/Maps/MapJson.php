@@ -14,15 +14,26 @@ class MapJson implements Map
     private $limits;
     private $targets;
 
+    /**
+     * Create method
+     *
+     * @param string $pathJson The path
+     * @return MapJson
+     */
     public static function create($pathJson)
     {
-
         $mapJson = new MapJson();
         $mapJson->setPathJson($pathJson);
 
         return $mapJson;
     }
 
+    /**
+     * Path JSON setter
+     *
+     * @param PathJson $pathJson The path to the JSON
+     * @return void
+     */
     private function setPathJson($pathJson)
     {
         $json = file_get_contents($pathJson);
@@ -87,27 +98,24 @@ class MapJson implements Map
      */
     public function targets()
     {
-        $targets = array();
+        $targets = [];
 
-        foreach($this->targets as $target)
-        {
-            if($target['type'] == 'text')
-            {
+        foreach ($this->targets as $target) {
+            if ($target['type'] == 'text') {
                 $t = new TextTarget($target['id'], new Point($target['x1'], $target['y1']), new Point($target['x2'], $target['y2']));
             }
 
-            if($target['type'] == 'rectangle')
-            {
+            if ($target['type'] == 'rectangle') {
                 $t = new RectangleTarget($target['id'], new Point($target['x1'], $target['y1']), new Point($target['x2'], $target['y2']));
             }
 
-            if($target['type'] == 'circle')
-            {
+            if ($target['type'] == 'circle') {
                 $t = new CircleTarget($target['id'], new Point($target['x'], $target['y']), $target['radius']);
             }
 
-            if(isset($target['tolerance']))
+            if (isset($target['tolerance'])) {
                 $t->setTolerance($target['tolerance']);
+            }
 
             $targets[] = $t;
         }

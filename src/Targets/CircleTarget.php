@@ -24,9 +24,9 @@ class CircleTarget extends Target
     /**
      * Constructor
      *
-     * @param $id
-     * @param Point $point
-     * @param $radius
+     * @param mixed $id The ID
+     * @param Point $point The Point
+     * @param float $radius The radius
      */
     public function __construct($id, Point $point, $radius)
     {
@@ -54,7 +54,4 @@ class CircleTarget extends Target
     {
         return $this->radius;
     }
-
-
-
 }

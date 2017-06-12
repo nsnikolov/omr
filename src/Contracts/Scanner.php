@@ -1,7 +1,5 @@
 <?php
-
 namespace JansenFelipe\OMR\Contracts;
-
 
 use JansenFelipe\OMR\Area;
 use JansenFelipe\OMR\Point;
@@ -27,7 +25,7 @@ abstract class Scanner
     protected $debug = false;
 
     /**
-     * Path image to wirte debug image file
+     * Path image to write debug image file
      *
      * @var string
      */
@@ -36,78 +34,83 @@ abstract class Scanner
     /**
      * Most point to the top/right
      *
+     * @param Point $near The point near
      * @return Point
      */
-    protected abstract function topRight(Point $near);
+    abstract protected function topRight(Point $near);
 
     /**
      * Most point to the bottom/left
      *
+     * @param Point $near The point near
      * @return Point
      */
-    protected abstract function bottomLeft(Point $near);
+    abstract protected function bottomLeft(Point $near);
 
     /**
      * Returns pixel analysis in a rectangular area
      *
-     * @param Point $a
-     * @param Point $b
-     * @param float $tolerance
+     * @param Point $a A point
+     * @param Point $b A point
+     * @param float $tolerance The tolerance
      * @return Area
      */
-    protected abstract function rectangleArea(Point $a, Point $b, $tolerance);
+    abstract protected function rectangleArea(Point $a, Point $b, $tolerance);
 
     /**
      * Returns pixel analysis in a circular area
      *
-     * @param Point $a
-     * @param float $radius
-     * @param float $tolerance
+     * @param Point $a A point
+     * @param float $radius The radius
+     * @param float $tolerance The tolerance
      * @return Area
      */
-    protected abstract function circleArea(Point $a, $radius, $tolerance);
+    abstract protected function circleArea(Point $a, $radius, $tolerance);
 
     /**
      * Returns image blob in a rectangular area
      *
-     * @param Point $a
-     * @param Point $b
+     * @param Point $a A point
+     * @param Point $b A point
      * @return string
      */
-    protected abstract function textArea(Point $a, Point $b);
+    abstract protected function textArea(Point $a, Point $b);
 
     /**
      * Increases or decreases image size
      *
-     * @param float $percent
+     * @param float $percent The percentage
+     * @return void
      */
-    protected abstract function ajustSize($percent);
+    abstract protected function adjustSize($percent);
 
     /**
      * Rotate image
      *
-     * @param float $degrees
+     * @param float $degrees The degrees
+     * @return void
      */
-    protected abstract function ajustRotate($degrees);
+    abstract protected function adjustRotate($degrees);
 
     /**
-     * Genereate file debug.jpg with targets, topRight and buttonLeft
+     * Generate file debug.jpg with targets, topRight and buttonLeft
      *
-     * @param void
+     * @return void
      */
-    protected abstract function debug();
+    abstract protected function debug();
 
     /**
      * Finish processes
      *
-     * @param void
+     * @return void
      */
-    protected abstract function finish();
+    abstract protected function finish();
 
     /**
      * Set image path
      *
-     * @param mixed $imagePath
+     * @param mixed $imagePath The image path
+     * @return void
      */
     public function setImagePath($imagePath)
     {
@@ -117,7 +120,8 @@ abstract class Scanner
     /**
      * Set debug image path
      *
-     * @param mixed $debugPath
+     * @param mixed $debugPath The debug path
+     * @return void
      */
     public function setDebugPath($debugPath)
     {
@@ -127,8 +131,7 @@ abstract class Scanner
     /**
      * Scan specific image
      *
-     * @param $imagePath
-     * @param Map $map
+     * @param Map $map The map
      * @return Result
      */
     public function scan(Map $map)
@@ -159,10 +162,10 @@ abstract class Scanner
         $bottomLeftImage = $this->bottomLeft($bottomLeftMap);
 
         /*
-         * Ajust angle image
+         * Adjust angle image
          */
         $angleImage = $this->anglePoints($topRightImage, $bottomLeftImage);
-        $this->ajustRotate($angleMap - $angleImage);
+        $this->adjustRotate($angleMap - $angleImage);
 
         /*
          * Check image again
@@ -171,11 +174,11 @@ abstract class Scanner
         $bottomLeftImage = $this->bottomLeft($bottomLeftMap);
 
         /*
-         * Ajust size image
+         * Adjust size image
          */
         $distanceCornersImage = $this->distancePoints($topRightImage, $bottomLeftImage);
         $p = 100 - ((100 * $distanceCornersImage) / $distanceCornersMap);
-        $this->ajustSize($p);
+        $this->adjustSize($p);
 
         /*
          * Check image again
@@ -183,38 +186,31 @@ abstract class Scanner
         $topRightImage = $this->topRight($topRightMap);
         $bottomLeftImage = $this->bottomLeft($bottomLeftMap);
 
-        $ajustX = $topRightImage->getX() - $topRightMap->getX();
-        $ajustY = $bottomLeftImage->getY() - $bottomLeftMap->getY();
+        $adjustX = $topRightImage->getX() - $topRightMap->getX();
+        $adjustY = $bottomLeftImage->getY() - $bottomLeftMap->getY();
 
-        foreach($map->targets() as $target)
-        {
-            if ($target instanceof TextTarget)
-            {
-                $target->setImageBlob($this->textArea($target->getA()->moveX($ajustX)->moveY($ajustY), $target->getB()->moveX($ajustX)->moveY($ajustY)));
-
-            }else {
-
-                if ($target instanceof RectangleTarget)
-                {
-                    $area = $this->rectangleArea($target->getA()->moveX($ajustX)->moveY($ajustY), $target->getB()->moveX($ajustX)->moveY($ajustY), $target->getTolerance());
+        foreach ($map->targets() as $target) {
+            if ($target instanceof TextTarget) {
+                $target->setImageBlob($this->textArea($target->getA()->moveX($adjustX)->moveY($adjustY), $target->getB()->moveX($adjustX)->moveY($adjustY)));
+            } else {
+                if ($target instanceof RectangleTarget) {
+                    $area = $this->rectangleArea($target->getA()->moveX($adjustX)->moveY($adjustY), $target->getB()->moveX($adjustX)->moveY($adjustY), $target->getTolerance());
                 }
 
-                if ($target instanceof CircleTarget)
-                {
-                    $area = $this->circleArea($target->getPoint()->moveX($ajustX)->moveY($ajustY), $target->getRadius(), $target->getTolerance());
+                if ($target instanceof CircleTarget) {
+                    $area = $this->circleArea($target->getPoint()->moveX($adjustX)->moveY($adjustY), $target->getRadius(), $target->getTolerance());
                 }
 
                 $target->setBlackPixelsPercent($area->percentBlack());
-                
                 $target->setMarked($area->percentBlack() >= $target->getTolerance());
             }
 
             $result->addTarget($target);
         }
 
-
-        if($this->debug)
+        if ($this->debug) {
             $this->debug();
+        }
 
         $this->finish();
 
@@ -224,12 +220,12 @@ abstract class Scanner
     /**
      * Calculates distance between two points
      *
-     * @param Point $a
-     * @param Point $b
+     * @param Point $a A point
+     * @param Point $b A point
      * @return float
      */
-    protected function distancePoints(Point $a, Point $b){
-
+    protected function distancePoints(Point $a, Point $b)
+    {
         $diffX = $b->getX() - $a->getX();
         $diffY = $b->getY() - $a->getY();
 
@@ -239,22 +235,23 @@ abstract class Scanner
     /**
      * Calculates angle between two points
      *
-     * @param Point $a
-     * @param Point $b
+     * @param Point $a A point
+     * @param Point $b A point
      * @return float
      */
-    protected function anglePoints(Point $a, Point $b){
-
+    protected function anglePoints(Point $a, Point $b)
+    {
         $diffX = $b->getX() - $a->getX();
         $diffY = $b->getY() - $a->getY();
 
-        return rad2deg(atan($diffY/$diffX));
+        return rad2deg(atan($diffY / $diffX));
     }
 
     /**
      * Set debug flag
      *
-     * @param boolean $debug
+     * @param bool $debug The debug flag
+     * @return void
      */
     public function setDebug($debug)
     {
@@ -264,11 +261,11 @@ abstract class Scanner
     /**
      * Create Result object from imagePath
      *
-     * @param string $imagePath
+     * @param string $imagePath The image path
      * @return Result
      */
-    protected function createResult($imagePath){
-
+    protected function createResult($imagePath)
+    {
         $info = getimagesize($imagePath);
 
         $result = new Result();
@@ -276,5 +273,4 @@ abstract class Scanner
 
         return $result;
     }
-
 }
