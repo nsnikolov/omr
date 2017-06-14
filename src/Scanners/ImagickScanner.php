@@ -215,7 +215,7 @@ class ImagickScanner extends Scanner
         $whites = 0;
 
         foreach ($counts as $k => $qtd) {
-            if ($k == -1) {
+            if ($k === 0) {
                 $whites += $qtd;
             } else {
                 $blacks += $qtd;
@@ -228,7 +228,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance?"#0000CC":"#CC0000");
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? "#0000CC" : "#CC0000");
         $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $area;
@@ -244,7 +244,35 @@ class ImagickScanner extends Scanner
      */
     protected function circleArea(Point $a, $radius, $tolerance)
     {
-        return true;
+        $imagick = $this->getImagick();
+        $x = $a->getX();
+        $y = $a->getY();
+        $leg = sqrt(($radius * $radius) / 2);
+
+        $pixels = $imagick->exportImagePixels($x, $y, $leg, $leg, "I", Imagick::PIXEL_CHAR);
+        $counts = array_count_values($pixels);
+
+        $blacks = 0;
+        $whites = 0;
+
+        foreach ($counts as $k => $qtd) {
+            if ($k === 0) {
+                $whites += $qtd;
+            } else {
+                $blacks += $qtd;
+            }
+        }
+
+        $area = new Area(count($pixels), $whites, $blacks);
+
+        //Add draw debug
+        $this->draw->setStrokeOpacity(1);
+        $this->draw->setFillOpacity(0);
+        $this->draw->setStrokeWidth(2);
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? "#0000CC" : "#CC0000");
+        $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
+
+        return $area;
     }
 
     /**
