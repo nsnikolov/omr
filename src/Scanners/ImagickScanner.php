@@ -63,14 +63,19 @@ class ImagickScanner extends Scanner
     private function getImagick()
     {
         if (is_null($this->imagick)) {
-            $this->original = new Imagick($this->imagePath);
+            $this->original = new Imagick();
+            $this->original->setResolution(100, 100);
+            $this->original->readimage($this->imagePath);
+            $this->original->setImageFormat('jpeg');
 
-            $this->imagick = new Imagick($this->imagePath);
-            $this->imagick->setResolution(300, 300);
-            $this->imagick->thresholdImage(0.5);
-            $this->imagick->medianFilterImage(2);
-            $this->imagick->setImageCompression(imagick::COMPRESSION_JPEG);
+            $this->imagick = new Imagick();
+            $this->imagick->setResolution(100, 100);
+            $this->imagick->readimage($this->imagePath);
             $this->imagick->setImageCompressionQuality(100);
+            $this->imagick->setImageFormat('jpeg');
+            $this->imagick->thresholdImage(0.5);
+            $this->imagick->medianFilterImage(1);
+            $this->imagick->setImageCompression(Imagick::COMPRESSION_JPEG);
         }
 
         return $this->imagick;
@@ -81,9 +86,11 @@ class ImagickScanner extends Scanner
      *
      * @param Point $near A point
      * @return Point
+     * @todo Get this to work
      */
     protected function topRight(Point $near)
     {
+        return $near;
         $imagick = $this->getImagick();
 
         $first = new Point($near->getX() - 200, $near->getY() - 100);
@@ -95,7 +102,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($this->_colors['green']);
+        $this->draw->setStrokeColor($this->_colors['blue']);
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
@@ -126,11 +133,12 @@ class ImagickScanner extends Scanner
      * Most point to the bottom/left
      *
      * @param Point $near The point
-     *
      * @return Point
+     * @todo Get this to work
      */
     protected function bottomLeft(Point $near)
     {
+        return $near;
         $imagick = $this->getImagick();
         $side = 200;
 
@@ -143,7 +151,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($this->_colors['green']);
+        $this->draw->setStrokeColor($this->_colors['purple']);
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
@@ -162,7 +170,7 @@ class ImagickScanner extends Scanner
         }
 
         //Debug draw
-        $this->draw->setFillColor($this->_colors['green']);
+        $this->draw->setFillColor($this->_colors['purple']);
         $this->draw->point($point->getX(), $point->getY());
 
         return $point;
@@ -259,7 +267,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['blue'] : $this->_colors['red']);
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
         $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $area;
@@ -300,7 +308,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['blue'] : $this->_colors['red']);
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
         $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
 
         $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
