@@ -256,7 +256,7 @@ class ImagickScanner extends Scanner
         $whites = 0;
 
         foreach ($counts as $k => $qtd) {
-            if ($k === 0) {
+            if ($k === 255) {
                 $whites += $qtd;
             } else {
                 $blacks += $qtd;
@@ -271,6 +271,8 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeWidth(2);
         $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? "#0000CC" : "#CC0000");
         $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
+
+        $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
 
         return $area;
     }
