@@ -10,9 +10,40 @@ use JansenFelipe\OMR\Point;
 
 class ImagickScanner extends Scanner
 {
+    /**
+     * Colors used when processing
+     *
+     * @var array
+     */
+    private $_colors = [
+        'red' => '#CC0000',
+        'green' => '#00CC00',
+        'blue' => '#0000CC',
+        'white' => '#FFFFFF',
+        'black' => '#000000',
+        'yellow' => '#FFFF00',
+        'purple' => '#CC00CC'
+    ];
 
+    /**
+     * Original image
+     *
+     * @var Imagick
+     */
     private $original;
+
+    /**
+     * Imagick
+     *
+     * @var Imagick
+     */
     private $imagick;
+
+    /**
+     * Imagick Draw
+     *
+     * @var ImagickDraw
+     */
     private $draw;
 
     /**
@@ -64,7 +95,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor("#00CC00");
+        $this->draw->setStrokeColor($this->_colors['green']);
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
@@ -84,7 +115,7 @@ class ImagickScanner extends Scanner
         }
 
         //Debug draw
-        $this->draw->setFillColor("#00CC00");
+        $this->draw->setFillColor($this->_colors['green']);
         $this->draw->point($point->getX(), $point->getY());
         $this->debug();
 
@@ -112,7 +143,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor("#00CC00");
+        $this->draw->setStrokeColor($this->_colors['green']);
         $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
@@ -131,7 +162,7 @@ class ImagickScanner extends Scanner
         }
 
         //Debug draw
-        $this->draw->setFillColor("#00CC00");
+        $this->draw->setFillColor($this->_colors['green']);
         $this->draw->point($point->getX(), $point->getY());
 
         return $point;
@@ -172,11 +203,11 @@ class ImagickScanner extends Scanner
         $originalWidth = $imagick->getImageWidth();
         $originalHeight = $imagick->getImageHeight();
 
-        $this->imagick->rotateImage("#FFFFFF", $degrees);
+        $this->imagick->rotateImage($this->_colors['white'], $degrees);
         $this->imagick->setImagePage($imagick->getimageWidth(), $imagick->getimageheight(), 0, 0);
         $this->imagick->cropImage($originalWidth, $originalHeight, ($imagick->getimageWidth() - $originalWidth) / 2, ($imagick->getimageHeight() - $originalHeight) / 2);
 
-        $this->original->rotateImage("#FFFFFF", $degrees);
+        $this->original->rotateImage($this->_colors['white'], $degrees);
         $this->original->setImagePage($imagick->getimageWidth(), $imagick->getimageheight(), 0, 0);
         $this->original->cropImage($originalWidth, $originalHeight, ($imagick->getimageWidth() - $originalWidth) / 2, ($imagick->getimageHeight() - $originalHeight) / 2);
     }
@@ -228,7 +259,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? "#0000CC" : "#CC0000");
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['blue'] : $this->_colors['red']);
         $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $area;
@@ -269,7 +300,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? "#0000CC" : "#CC0000");
+        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['blue'] : $this->_colors['red']);
         $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
 
         $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
@@ -295,7 +326,7 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeOpacity(1);
         $this->draw->setFillOpacity(0);
         $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor("#FFFF00");
+        $this->draw->setStrokeColor($this->_colors['yellow']);
         $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $region->getImageBlob();
