@@ -137,7 +137,12 @@ abstract class Scanner
     public function scan(Map $map)
     {
         $info = getimagesize($this->imagePath);
-
+        if ($info === false) {
+            $command = escapeshellcmd('identify -format "%wx%h" ' . $this->imagePath) . '[0]';
+            $geometry = `$command`;
+            $info = explode("x", $geometry);
+            $info['mime'] = 'image/jpeg';
+        }
         /*
          * Setup result
          */
