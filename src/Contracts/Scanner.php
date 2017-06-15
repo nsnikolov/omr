@@ -203,7 +203,7 @@ abstract class Scanner
                 }
 
                 if ($target instanceof CircleTarget) {
-                    $area = $this->circleArea($target->getPoint()->moveX($adjustX)->moveY($adjustY), $target->getRadius(), $target->getTolerance());
+                    $area = $this->circleArea($target->getPoint()->moveX($adjustX)->moveY($adjustY), $target->getRadius(), $target->getTolerance(), $target->getId());
                 }
 
                 $target->setBlackPixelsPercent($area->percentBlack());

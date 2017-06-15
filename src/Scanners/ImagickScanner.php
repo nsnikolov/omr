@@ -22,7 +22,8 @@ class ImagickScanner extends Scanner
         'white' => '#FFFFFF',
         'black' => '#000000',
         'yellow' => '#FFFF00',
-        'purple' => '#CC00CC'
+        'purple' => '#CC00CC',
+        'gray' => '#D3D3D3'
     ];
 
     /**
@@ -281,7 +282,7 @@ class ImagickScanner extends Scanner
      * @param float $tolerance The tolerance
      * @return Area
      */
-    protected function circleArea(Point $a, $radius, $tolerance)
+    protected function circleArea(Point $a, $radius, $tolerance, $id = null)
     {
         $imagick = $this->getImagick();
         $x = $a->getX();
@@ -315,6 +316,14 @@ class ImagickScanner extends Scanner
         $this->draw->setFillOpacity(1);
         $this->draw->setStrokeWidth(1);
         $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
+        
+        if (!empty($id)) {
+            $this->draw->setStrokeColor($this->_colors['gray']);
+            $this->draw->setStrokeOpacity(0.7);
+            $this->draw->setFillOpacity(0.7);
+            $this->draw->setStrokeWidth(1);
+            $this->draw->annotation(($x + $leg * 2), ($y - $leg * 2), $id);
+        }
 
         return $area;
     }

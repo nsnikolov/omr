@@ -54,4 +54,9 @@ class CircleTarget extends Target
     {
         return $this->radius;
     }
+
+    public function getId()
+    {
+        return $this->id;
+    }
 }
