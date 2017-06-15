@@ -311,6 +311,9 @@ class ImagickScanner extends Scanner
         $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
         $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
 
+        $this->draw->setStrokeOpacity(1);
+        $this->draw->setFillOpacity(1);
+        $this->draw->setStrokeWidth(1);
         $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
 
         return $area;
