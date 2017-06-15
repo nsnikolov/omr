@@ -17,7 +17,7 @@ class ImagickScanner extends Scanner
      */
     private $_colors = [
         'red' => '#CC0000',
-        'green' => '#00CC00',
+        'green' => '#009900',
         'blue' => '#0000CC',
         'white' => '#FFFFFF',
         'black' => '#000000',
