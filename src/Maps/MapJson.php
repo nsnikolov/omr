@@ -27,7 +27,7 @@ class MapJson implements Map
         if (!empty($pathJson)) {
             $mapJson->setPathJson($pathJson);
         } elseif (!empty($jsonString)) {
-
+            $mapJson->setPathJson(null, $jsonString);
         }
 
         return $mapJson;
