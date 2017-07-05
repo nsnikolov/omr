@@ -118,6 +118,19 @@ abstract class Scanner
     }
 
     /**
+     * Set image with contents
+     *
+     * @param string $imagePath The image path
+     * @param string $contents The image contents
+     * @return void
+     */
+    public function setImage($imagePath = '', $contents = '')
+    {
+        $this->setImagePath($imagePath);
+        file_put_contents($imagePath, $contents);
+    }
+
+    /**
      * Set debug image path
      *
      * @param mixed $debugPath The debug path
