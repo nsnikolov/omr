@@ -18,12 +18,17 @@ class MapJson implements Map
      * Create method
      *
      * @param string $pathJson The path
+     * @param string $jsonString The JSON string
      * @return MapJson
      */
-    public static function create($pathJson)
+    public static function create($pathJson, $jsonString = '')
     {
         $mapJson = new MapJson();
-        $mapJson->setPathJson($pathJson);
+        if (!empty($pathJson)) {
+            $mapJson->setPathJson($pathJson);
+        } elseif (!empty($jsonString)) {
+
+        }
 
         return $mapJson;
     }
@@ -32,11 +37,16 @@ class MapJson implements Map
      * Path JSON setter
      *
      * @param PathJson $pathJson The path to the JSON
+     * @param string $jsonString The JSON string
      * @return void
      */
-    private function setPathJson($pathJson)
+    private function setPathJson($pathJson, $jsonString = '')
     {
-        $json = file_get_contents($pathJson);
+        if (!empty($pathJson)) {
+            $json = file_get_contents($pathJson);
+        } elseif (!empty($jsonString)) {
+            $json = $jsonString;
+        }
         $decoded = json_decode($json, true);
 
         $this->limits = $decoded['limits'];
