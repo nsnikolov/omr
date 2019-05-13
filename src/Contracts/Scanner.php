@@ -142,6 +142,16 @@ abstract class Scanner
     }
 
     /**
+     * Set verification image path
+     *
+     * @param mixed $debugPath The debug path
+     * @return void
+     */
+    public function setVerificationPath($verificationPath)
+    {
+        $this->verificationPath = $verificationPath;
+    }
+    /**
      * Scan specific image
      *
      * @param Map $map The map
@@ -183,7 +193,7 @@ abstract class Scanner
          * Adjust angle image
          */
         $angleImage = $this->anglePoints($topRightImage, $bottomLeftImage);
-        $this->adjustRotate($angleMap - $angleImage);
+        //$this->adjustRotate($angleMap - $angleImage); // normally there should not be rotation
 
         /*
          * Check image again
@@ -196,7 +206,7 @@ abstract class Scanner
          */
         $distanceCornersImage = $this->distancePoints($topRightImage, $bottomLeftImage);
         $p = 100 - ((100 * $distanceCornersImage) / $distanceCornersMap);
-        $this->adjustSize($p);
+        //$this->adjustSize($p); //commented because it seems we do not need resize as as we calculate points from barcode positions 
 
         /*
          * Check image again
@@ -206,6 +216,9 @@ abstract class Scanner
 
         $adjustX = $topRightImage->getX() - $topRightMap->getX();
         $adjustY = $bottomLeftImage->getY() - $bottomLeftMap->getY();
+ 
+        $adjustX = 0;
+        $adjustY = 0;
 
         foreach ($map->targets() as $target) {
             if ($target instanceof TextTarget) {
@@ -226,7 +239,7 @@ abstract class Scanner
             $result->addTarget($target);
         }
 
-        if ($this->debug) {
+        if ($this->debug || strlen($this->verificationPath) > 0) {
             $this->debug();
         }
 

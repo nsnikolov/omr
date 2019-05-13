@@ -45,15 +45,28 @@ class ImagickScanner extends Scanner
      *
      * @var ImagickDraw
      */
-    private $draw;
+    private $drawDebug;
 
-    /**
+     /**
+     * Imagick Draw
+     *
+     * @var ImagickDraw
+     */
+    private $drawVerification;
+
+       /**
      * Construct method
      */
     public function __construct()
     {
-        $this->draw = new ImagickDraw();
-        $this->draw->setFontSize(6);
+        $this->drawDebug = new ImagickDraw();
+        $this->drawDebug->setFontSize(6);
+        $this->drawVerification = new ImagickDraw();
+        $this->drawVerification->setFontSize(6);
+        $this->drawVerification->setStrokeOpacity(1);
+        $this->drawVerification->setFillOpacity(0);
+        $this->drawVerification->setStrokeWidth(5);
+        $this->drawVerification->setStrokeColor($this->_colors['green']);
     }
 
     /**
@@ -65,16 +78,17 @@ class ImagickScanner extends Scanner
     {
         if (is_null($this->imagick)) {
             $this->original = new Imagick();
-            $this->original->setResolution(100, 100);
+            $this->original->setResolution(300, 300);
             $this->original->readimage($this->imagePath);
             $this->original->setImageFormat('jpeg');
 
             $this->imagick = new Imagick();
-            $this->imagick->setResolution(100, 100);
+            $this->imagick->setResolution(300, 300);
             $this->imagick->readimage($this->imagePath);
             $this->imagick->setImageCompressionQuality(100);
             $this->imagick->setImageFormat('jpeg');
-            $this->imagick->thresholdImage(0.5);
+            $this->imagick->thresholdImage(0.37 * \Imagick::getQuantum()); //sholud be tested for different values of constant 0.37 with different phones pictures
+            //$this->imagick->thresholdImage(0.1);
             $this->imagick->medianFilterImage(1);
             $this->imagick->setImageCompression(Imagick::COMPRESSION_JPEG);
         }
@@ -91,20 +105,24 @@ class ImagickScanner extends Scanner
      */
     protected function topRight(Point $near)
     {
-        return $near;
+        //return $near;
         $imagick = $this->getImagick();
 
-        $first = new Point($near->getX() - 200, $near->getY() - 100);
-        $last = new Point($near->getX() + 100, $near->getY() + 200);
+        //$first = new Point($near->getX() - 200, $near->getY() - 100);
+        //$last  = new Point($near->getX() + 100, $near->getY() + 200);
+
+        $first = new Point($near->getX() - 0, $near->getY() - 100);
+        $last = new Point($near->getX() + 100, $near->getY() + 0);
+
 
         $point = new Point($first->getX(), $last->getY());
 
-        //Add draw debug
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(0);
-        $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($this->_colors['blue']);
-        $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
+        //Add drawDebug debug
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(0);
+        $this->drawDebug->setStrokeWidth(2);
+        $this->drawDebug->setStrokeColor($this->_colors['blue']);
+        $this->drawDebug->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
             for ($x = $first->getX(); $x != $last->getX(); $x++) {
@@ -122,9 +140,9 @@ class ImagickScanner extends Scanner
             }
         }
 
-        //Debug draw
-        $this->draw->setFillColor($this->_colors['green']);
-        $this->draw->point($point->getX(), $point->getY());
+        //Debug drawDebug
+        $this->drawDebug->setFillColor($this->_colors['green']);
+        $this->drawDebug->point($point->getX(), $point->getY());
         $this->debug();
 
         return $point;
@@ -139,21 +157,26 @@ class ImagickScanner extends Scanner
      */
     protected function bottomLeft(Point $near)
     {
-        return $near;
+        //return $near;
         $imagick = $this->getImagick();
         $side = 200;
 
-        $first = new Point($near->getX() - 100, $near->getY() - 200);
-        $last = new Point($near->getX() + 200, $near->getY() + 100);
+        //$first = new Point($near->getX() - 100, $near->getY() - 200);
+        //$last  = new Point($near->getX() + 200, $near->getY() + 100);
+
+       // $first = new Point($near->getX() - 0, $near->getY() - 100);
+        //$last = new Point($near->getX() + 100, $near->getY() + 0);
+        $first = new Point($near->getX() - 100, $near->getY() - 0);
+        $last = new Point($near->getX() + 0, $near->getY() + 100);
 
         $point = new Point($last->getX(), $first->getY());
 
-        //Add draw debug
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(0);
-        $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($this->_colors['purple']);
-        $this->draw->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
+        //Add drawDebug debug
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(0);
+        $this->drawDebug->setStrokeWidth(2);
+        $this->drawDebug->setStrokeColor($this->_colors['purple']);
+        $this->drawDebug->rectangle($first->getX(), $first->getY(), $last->getX(), $last->getY());
 
         for ($y = $first->getY(); $y != $last->getY(); $y++) {
             for ($x = $first->getX(); $x != $last->getX(); $x++) {
@@ -170,9 +193,9 @@ class ImagickScanner extends Scanner
             }
         }
 
-        //Debug draw
-        $this->draw->setFillColor($this->_colors['purple']);
-        $this->draw->point($point->getX(), $point->getY());
+        //Debug drawDebug
+        $this->drawDebug->setFillColor($this->_colors['purple']);
+        $this->drawDebug->point($point->getX(), $point->getY());
 
         return $point;
     }
@@ -228,9 +251,17 @@ class ImagickScanner extends Scanner
      */
     public function debug()
     {
-        $imagick = $this->getImagick();
-        $imagick->drawImage($this->draw);
-        $imagick->writeImage($this->debugPath);
+        if(strlen($this->verificationPath) > 0 ){
+            $imagickV = $this->getImagick();
+            $imagickV->drawImage($this->drawVerification);
+            $imagickV->writeImage($this->verificationPath);
+        }
+        if($this->debug){
+            $imagick = $this->getImagick();
+            $imagick->drawImage($this->drawDebug);
+            $imagick->writeImage($this->debugPath);        
+        }
+
     }
 
     /**
@@ -256,20 +287,27 @@ class ImagickScanner extends Scanner
 
         foreach ($counts as $k => $qtd) {
             if ($k === 0) {
-                $whites += $qtd;
-            } else {
                 $blacks += $qtd;
+            } else {
+                $whites += $qtd;
             }
         }
 
         $area = new Area(count($pixels), $whites, $blacks);
 
-        //Add draw debug
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(0);
-        $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
-        $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
+        //Add drawDebug debug
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(0);
+        $this->drawDebug->setStrokeWidth(2);
+        $this->drawDebug->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
+        $this->drawDebug->setStrokeWidth(1);
+        $this->drawDebug->annotation(($b->getX() + 10), $a->getY(), number_format($area->percentBlack(), 2) . '%');
+
+        
+        $this->drawDebug->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
+        if($area->percentBlack() >= $tolerance ){
+            $this->drawVerification->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
+        }
 
         return $area;
     }
@@ -289,7 +327,7 @@ class ImagickScanner extends Scanner
         $y = $a->getY();
         $leg = sqrt(($radius * $radius) / 2);
 
-        $pixels = $imagick->exportImagePixels($x, $y, $leg, $leg, "I", Imagick::PIXEL_CHAR);
+        $pixels = $imagick->exportImagePixels($x-$leg, $y-$leg, 2*$leg, 2*$leg, "I", Imagick::PIXEL_CHAR);
         $counts = array_count_values($pixels);
 
         $blacks = 0;
@@ -305,24 +343,28 @@ class ImagickScanner extends Scanner
 
         $area = new Area(count($pixels), $whites, $blacks);
 
-        //Add draw debug
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(0);
-        $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
-        $this->draw->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
+        //Add drawDebug debug
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(0);
+        $this->drawDebug->setStrokeWidth(2);
+        $this->drawDebug->setStrokeColor($area->percentBlack() >= $tolerance ? $this->_colors['green'] : $this->_colors['red']);
+        $this->drawDebug->rectangle(($x - $leg), ($y + $leg), ($x + $leg), ($y - $leg));
 
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(1);
-        $this->draw->setStrokeWidth(1);
-        $this->draw->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(1);
+        $this->drawDebug->setStrokeWidth(1);
+        $this->drawDebug->annotation(($x + $leg * 2), $y, number_format($area->percentBlack(), 2) . '%');
         
         if (!empty($id)) {
-            $this->draw->setStrokeColor($this->_colors['gray']);
-            $this->draw->setStrokeOpacity(0.7);
-            $this->draw->setFillOpacity(0.7);
-            $this->draw->setStrokeWidth(1);
-            $this->draw->annotation(($x + $leg * 2), ($y - $leg * 2), $id);
+            $this->drawDebug->setStrokeColor($this->_colors['gray']);
+            $this->drawDebug->setStrokeOpacity(0.7);
+            $this->drawDebug->setFillOpacity(0.7);
+            $this->drawDebug->setStrokeWidth(1);
+            $this->drawDebug->annotation(($x + $leg * 2), ($y - $leg * 2), $id);
+        }
+
+        if($area->percentBlack() >= $tolerance ){
+            $this->drawVerification->rectangle(($x - 2*$leg), ($y + 2*$leg), ($x + 2*$leg), ($y - 2*$leg));
         }
 
         return $area;
@@ -342,12 +384,12 @@ class ImagickScanner extends Scanner
 
         $region = $this->original->getImageRegion($width, $height, $a->getX(), $a->getY());
 
-        //Add draw debug
-        $this->draw->setStrokeOpacity(1);
-        $this->draw->setFillOpacity(0);
-        $this->draw->setStrokeWidth(2);
-        $this->draw->setStrokeColor($this->_colors['yellow']);
-        $this->draw->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
+        //Add drawDebug debug
+        $this->drawDebug->setStrokeOpacity(1);
+        $this->drawDebug->setFillOpacity(0);
+        $this->drawDebug->setStrokeWidth(2);
+        $this->drawDebug->setStrokeColor($this->_colors['yellow']);
+        $this->drawDebug->rectangle($a->getX(), $a->getY(), $b->getX(), $b->getY());
 
         return $region->getImageBlob();
     }
